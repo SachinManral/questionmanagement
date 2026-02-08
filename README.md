@@ -1,95 +1,89 @@
-# Codolio Question Sheet - Dark Glass Theme Implementation
+# Codolio Question Sheet
 
-## 🎨 Theme Update: Dark Glass Aesthetic
+## Theme Update
 
-This project has been updated from the orange-themed interface to a **professional Dark Glass palette** with deep blues/grays and neon indigo accents, following Codolio's developer-focused design language.
+Switched from the orange theme to a dark glass aesthetic with deep blues and grays. The new design uses indigo accents and feels more professional overall.
 
----
-
-## 🎨 Color Palette
+## Color Palette
 
 ### Primary Colors
+
 ```javascript
 {
-  background: "#0f172a",    // Slate-950 - Main background
-  surface: "#1e293b",       // Slate-800 - Card backgrounds
-  surfaceHover: "#334155",  // Slate-700 - Hover states
-  primary: "#6366f1",       // Indigo-500 - Buttons & primary actions
-  accent: "#818cf8",        // Indigo-400 - Hover states & highlights
-  success: "#10b981",       // Emerald-500 - Progress & checkmarks
-  muted: "#94a3b8",         // Slate-400 - Secondary text
-  border: "#1e293b",        // Slate-800 - Borders
+  background: "#0f172a",    // Main background
+  surface: "#1e293b",       // Card backgrounds
+  surfaceHover: "#334155",  // Hover states
+  primary: "#6366f1",       // Buttons and primary actions
+  accent: "#818cf8",        // Hover states and highlights
+  success: "#10b981",       // Progress and checkmarks
+  muted: "#94a3b8",         // Secondary text
+  border: "#1e293b",        // Borders
 }
 ```
 
-### When to Use Each Color
-- **Background (`#0f172a`)**: Main app background
-- **Surface (`#1e293b`)**: Cards, modals, input fields
-- **Primary (`#6366f1`)**: Call-to-action buttons, links, focus states
-- **Accent (`#818cf8`)**: Hover effects, highlights
-- **Success (`#10b981`)**: Progress bars, completed items, success indicators
-- **Muted (`#94a3b8`)**: Secondary text, placeholders
+### Usage
 
----
+- **Background** - Main app background
+- **Surface** - Cards, modals, input fields
+- **Primary** - Call-to-action buttons, links, focus states
+- **Accent** - Hover effects, highlights
+- **Success** - Progress bars, completed items, success indicators
+- **Muted** - Secondary text, placeholders
 
-## 📁 Project Architecture
-
-### File Structure (Following Best Practices)
+## Project Structure
 
 ```
 src/
 ├── components/
 │   ├── ui/                      # Reusable UI components
-│   │   ├── Badge.jsx            # Difficulty tags (Easy/Med/Hard)
-│   │   ├── Button.jsx           # Styled button component
-│   │   ├── ProgressBar.jsx      # Visual progress indicator
-│   │   ├── Input.jsx            # Styled input fields
+│   │   ├── Badge.jsx            # Difficulty tags
+│   │   ├── Button.jsx           # Styled buttons
+│   │   ├── ProgressBar.jsx      # Progress indicator
+│   │   ├── Input.jsx            # Input fields
 │   │   └── Modal.jsx            # Modal wrapper
 │   │
-│   ├── sheet/                   # Core domain logic
-│   │   ├── SheetArea.jsx        # Main container with DragContext
-│   │   ├── TopicNode.jsx        # Topic accordion component
-│   │   ├── SubTopicNode.jsx     # Nested subtopic component
-│   │   └── QuestionItem.jsx     # Individual question item
+│   ├── sheet/                   # Core functionality
+│   │   ├── SheetArea.jsx        # Main container with drag/drop
+│   │   ├── TopicNode.jsx        # Topic accordion
+│   │   ├── SubTopicNode.jsx     # Nested subtopic
+│   │   └── QuestionItem.jsx     # Individual question
 │   │
 │   ├── layout/                  # Layout components
-│   │   ├── Header.jsx           # Navigation & search
+│   │   ├── Header.jsx           # Navigation and search
 │   │   └── StatsPanel.jsx       # Analytics sidebar
 │   │
-│   ├── Toast.jsx                # Toast notification system
+│   ├── Toast.jsx                # Notifications
 │   ├── ExportModal.jsx          # Export functionality
 │   └── StatsPanel.jsx           # Statistics display
 │
 ├── store/
-│   └── useSheetStore.js         # Zustand state manager (normalized)
+│   └── useSheetStore.js         # Zustand state manager
 │
 ├── hooks/
 │   └── UseCustomHooks.js        # Custom React hooks
 │
 ├── services/
-│   └── api.js                   # API integration layer
+│   └── api.js                   # API integration
 │
 ├── data/
-│   └── sampleData.js            # Initial sample data
+│   └── sampleData.js            # Sample data
 │
 ├── utils/
-│   └── cn.js                    # Tailwind class merger (optional)
+│   └── cn.js                    # Tailwind class merger
 │
-├── App.jsx                      # Main app component
-├── main.jsx                     # App entry point
-└── index.css                    # Global styles with Dark Glass theme
+├── App.jsx                      # Main app
+├── main.jsx                     # Entry point
+└── index.css                    # Global styles
 ```
 
----
+## State Management
 
-## 🏗️ Normalized State Architecture
+Using a normalized state structure instead of deeply nested arrays. This makes updates much faster since you can access any item directly by ID.
 
-### Why Normalized State?
-
-Instead of deeply nested arrays, we use a **flat, normalized structure** for O(1) operations:
+### Normalized vs Nested
 
 ```javascript
-// ❌ BAD: Deeply nested (O(N) operations)
+// Nested (slow for updates)
 {
   topics: [
     {
@@ -97,99 +91,64 @@ Instead of deeply nested arrays, we use a **flat, normalized structure** for O(1
       subTopics: [
         {
           id: '2',
-          questions: [...]  // Hard to update nested items
+          questions: [...]  // Have to traverse the whole tree
         }
       ]
     }
   ]
 }
 
-// ✅ GOOD: Normalized (O(1) operations)
+// Normalized (fast lookups)
 {
   topics: { '1': { id: '1', title: 'Arrays', subTopicIds: ['2'] } },
   subTopics: { '2': { id: '2', title: 'Sorting', questionIds: ['q1'] } },
   questions: { 'q1': { id: 'q1', text: 'Two Sum', status: 'done' } },
-  topicOrder: ['1', '2']  // Defines visual order
+  topicOrder: ['1', '2']
 }
 ```
 
-### Benefits
-1. **Performance**: Direct access to any item by ID
-2. **Immutability**: Easier to create new state without deep cloning
-3. **Scalability**: Handles 1000+ items efficiently
-4. **DnD Optimization**: Reordering only updates the order array
+Benefits:
+- Direct access to any item
+- Easier immutable updates
+- Better performance with large datasets
+- Makes drag and drop simpler
 
----
+## Features
 
-## 🎯 Key Features Implemented
+### Dark Glass UI
 
-### 1. Dark Glass UI Components
+Each component uses translucent backgrounds with backdrop blur for that glass effect. Topics show completion badges and progress bars. Questions have custom checkboxes with animations.
 
-#### Topic Node (Accordion)
-- **Header**: Title + completion badge (e.g., "2/5 Done")
-- **Progress Bar**: Thin emerald line showing completion %
-- **Inline Edit**: Double-click to edit (no modals)
-- **Glass Effect**: Translucent background with backdrop blur
+### Drag and Drop
 
-#### Question Item
-- **Custom Checkbox**: SVG with pulse animation on check
-- **Difficulty Badge**: Color-coded dot (Green/Yellow/Red)
-- **Hover Handle**: Drag icon appears only on hover
-- **Glass Morphism**: Subtle transparency with indigo borders
+Built with @dnd-kit. Items rotate slightly while being dragged and have visual feedback. The whole thing feels pretty smooth.
 
-### 2. Drag & Drop (@dnd-kit)
+### Focus Mode
 
-```javascript
-// Wrapped in DndContext
-<DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-  <SortableContext items={items}>
-    {/* Draggable items */}
-  </SortableContext>
-</DndContext>
-```
+Filter the list to only show incomplete questions. Helpful when you're trying to grind through problems.
 
-**Visual Cues**:
-- Rotate item slightly while dragging (`rotate-2`)
-- High shadow (`shadow-2xl`)
-- Opacity change (`opacity-50`)
+### Search and Filter
 
-### 3. Bonus Features
+Real-time search that works across topics, subtopics, and questions. Just start typing.
 
-#### Focus Mode ✨
-- Filter list to show only incomplete questions
-- Toggle in Header component
-- Helps students focus before interviews
+### Undo/Redo
 
-#### Search & Filter
-- Real-time search across topics, subtopics, and questions
-- Highlights matching results
-- Responsive filtering
+Standard keyboard shortcuts work - Ctrl+Z and Ctrl+Shift+Z. Keeps the last 50 states in history.
 
-#### Undo/Redo System
-- Keyboard shortcuts: `Ctrl+Z` / `Ctrl+Shift+Z`
-- History limited to last 50 states
-- Visual indicators when undo/redo available
+### Export
 
-#### Export Functionality
-- **JSON Export**: Raw data backup
-- **HTML/PDF Export**: Beautiful formatted document
-- Includes statistics and progress tracking
+Two options:
+- JSON export for backups
+- HTML export that you can print to PDF
 
----
-
-## 🚀 Getting Started
-
-### Installation
+## Setup
 
 ```bash
-# Install dependencies
 npm install zustand @dnd-kit/core @dnd-kit/sortable lucide-react
-
-# Start development server
 npm run dev
 ```
 
-### Required Dependencies
+### Dependencies
 
 ```json
 {
@@ -203,149 +162,120 @@ npm run dev
 }
 ```
 
----
+## Design Choices
 
-## 💡 Design Decisions
+### Why dark glass theme?
 
-### 1. Why Dark Glass Theme?
-- **Developer-focused**: Professional aesthetic favored by coders
-- **Eye comfort**: Reduced eye strain for long coding sessions
-- **Modern**: Aligns with current design trends (2024-2025)
-- **Branding**: Matches Codolio's visual identity
+Looks professional and is easier on the eyes during long sessions. Also matches what most developers prefer these days.
 
-### 2. Why Zustand over Redux?
-- **Simplicity**: Less boilerplate code
-- **Performance**: Built-in optimization
-- **TypeScript**: Better type inference
-- **Size**: Smaller bundle (~1KB)
+### Why Zustand?
 
-### 3. Why @dnd-kit?
-- **Modern**: Built for React 18+
-- **Accessible**: WCAG compliant
-- **Flexible**: Supports complex layouts
-- **Performant**: Uses CSS transforms
+Less boilerplate than Redux. Smaller bundle size. Better TypeScript support out of the box.
 
-### 4. Component Composition
-- **Atomic Design**: ui/ folder contains reusable atoms
-- **Feature-based**: sheet/ folder groups related components
-- **Separation of Concerns**: Logic (store) vs Presentation (components)
+### Why @dnd-kit?
 
----
+Works well with React 18. Has good accessibility support. Flexible enough for complex layouts.
 
-## 🎨 Styling Guidelines
+### Component organization
 
-### Using Theme Colors
+The ui folder has reusable stuff. The sheet folder groups related components together. Trying to keep logic separate from presentation.
+
+## Styling
+
+### Use theme colors
 
 ```jsx
-// ✅ Good - Using theme colors
+// Good
 <div className="bg-surface border border-border">
   <button className="bg-primary hover:bg-accent">Click</button>
 </div>
 
-// ❌ Avoid - Hardcoded colors
+// Not good
 <div className="bg-slate-800 border border-slate-700">
   <button className="bg-indigo-500 hover:bg-indigo-400">Click</button>
 </div>
 ```
 
-### Glass Morphism Effect
+### Glass effect
 
 ```jsx
 <div className="glass">
-  {/* Applies: backdrop-blur + translucent bg + subtle border */}
+  {/* Adds backdrop blur and translucent background */}
 </div>
 ```
 
-### Neon Glow Effect
+### Glow effect
 
 ```jsx
 <button className="neon-glow">
-  {/* Applies indigo glow on hover */}
+  {/* Adds indigo glow on hover */}
 </button>
 ```
 
----
+## Testing
 
-## 🧪 Testing Checklist
+Things to check:
+- Create, edit, delete topics/subtopics/questions
+- Drag and drop reordering
+- Search filtering
+- Undo/Redo shortcuts
+- Export to JSON and HTML
+- Progress bars updating
+- Toast notifications
+- Hover states
+- Mobile responsiveness
 
-- [ ] Topics can be created, edited, deleted
-- [ ] Subtopics can be created, edited, deleted
-- [ ] Questions can be created, edited, deleted
-- [ ] Drag and drop reorders items correctly
-- [ ] Search filters results in real-time
-- [ ] Undo/Redo works with keyboard shortcuts
-- [ ] Export generates valid JSON and HTML
-- [ ] Progress bars update on completion toggle
-- [ ] Toast notifications appear and dismiss
-- [ ] All hover states work correctly
-- [ ] Mobile responsive (if implemented)
+## Performance
 
----
+What's already done:
+- Memoization with useMemo for filtered lists
+- Normalized state for O(1) lookups
+- Debounced search with 300ms delay
 
-## 📈 Performance Optimization
+Could add later:
+- Virtual scrolling for huge lists
+- Service worker for offline use
+- IndexedDB for bigger datasets
+- Code splitting by route
 
-### Implemented
-- **Memoization**: `useMemo` for filtered lists
-- **Normalized State**: O(1) lookups
-- **Code Splitting**: Dynamic imports (if needed)
-- **Debounced Search**: 300ms delay on search input
+## Customization
 
-### Future Improvements
-- Virtual scrolling for 1000+ items
-- Service worker for offline support
-- IndexedDB for large datasets
-- React.lazy for route-based splitting
+### Change colors
 
----
-
-## 🔧 Customization
-
-### Changing Theme Colors
-
-Edit `tailwind.config.js`:
+Edit tailwind.config.js:
 
 ```javascript
 extend: {
   colors: {
     primary: "#your-color",
     accent: "#your-color",
-    // ...
   }
 }
 ```
 
-### Adding New Question Fields
+### Add question fields
 
-1. Update sample data structure in `data/sampleData.js`
-2. Modify Zustand store actions in `store/useSheetStore.js`
-3. Update UI components in `components/sheet/`
+1. Update sampleData.js
+2. Modify store actions in useSheetStore.js
+3. Update UI components
 
----
+## Resources
 
-## 📚 Resources
-
-- [Tailwind CSS Docs](https://tailwindcss.com/docs)
-- [Zustand Docs](https://docs.pmnd.rs/zustand)
-- [@dnd-kit Documentation](https://docs.dndkit.com/)
+- [Tailwind CSS](https://tailwindcss.com/docs)
+- [Zustand](https://docs.pmnd.rs/zustand)
+- [@dnd-kit](https://docs.dndkit.com/)
 - [Lucide Icons](https://lucide.dev/)
 
----
+## Contributing
 
-## 🤝 Contributing
+This is mostly a learning project. If you want to contribute:
+- Follow the existing file structure
+- Use the theme colors
+- Write clear commit messages
+- Test drag and drop carefully
 
-This is a learning project following professional architecture patterns. Contributions welcome!
+## License
 
-1. Follow the file structure
-2. Use theme colors from config
-3. Write descriptive commit messages
-4. Test drag-and-drop thoroughly
+MIT - use it for whatever you want
 
----
-
-## 📄 License
-
-MIT License - Feel free to use for learning and portfolio projects
-
----
-
-**Built with ❤️ using React, Zustand, dnd-kit, Tailwind CSS & Lucide Icons**
+Built with React, Zustand, dnd-kit, Tailwind CSS, and Lucide Icons
