@@ -1,0 +1,47 @@
+{
+  "name": "interactive-question-sheet",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Advanced interactive question management sheet with drag-and-drop, edit functionality, and progress tracking",
+  "type": "module",
+  "author": "Your Name",
+  "license": "MIT",
+  "keywords": [
+    "react",
+    "question-tracker",
+    "drag-and-drop",
+    "zustand",
+    "tailwindcss",
+    "dnd-kit",
+    "interactive-sheet"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0"
+  },
+  "dependencies": {
+    "@dnd-kit/core": "^6.1.0",
+    "@dnd-kit/sortable": "^8.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
+    "framer-motion": "^11.0.3",
+    "lucide-react": "^0.321.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "zustand": "^4.5.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.17",
+    "eslint": "^8.56.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.1",
+    "vite": "^7.3.1"
+  }
+}
